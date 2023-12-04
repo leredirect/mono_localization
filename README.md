@@ -1,39 +1,32 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+**MONO LOCALIZATION**   
+This package helps you to create overridable localization libraries for mono repository  .
+Example:  
+provide this config to your pubspec.yaml:
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+    mono_localization:  
+      enabled: true  
+      base_class_path: lib/test/library_base.dart  
+      base_class_name: LocalizationLibraryBase  
+      structure:  
+        - library:  
+            library_name: BaseLibrary  
+            base: true  
+            arb_dir: lib/test/base_library/arb/  
+            output_dir: lib/test/base_library/  
+            widget_path: lib/test/base_library/base_library_localization_provider.dart  
+            widget_name: BaseLibraryLocalizationProvider  
+        - library:  
+            library_name: OtherBaseLibrary  
+            base: true  
+            arb_dir: lib/test/other_base_library/arb/  
+            output_dir: lib/test/other_base_library/  
+            widget_path: lib/test/other_base_library/other_base_library_localization_provider.dart  
+            widget_name: OtherBaseLibraryLocalizationProvider  
+        - library:  
+            library_name: NonBaseLibrary  
+            arb_dir: lib/test/non_base_library/arb/  
+            output_dir: lib/test/non_base_library/  
+            widget_path: lib/test/non_base_library/non_base_library_localization_provider.dart  
+            widget_name: NonBaseLibraryLocalizationProvider
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
-
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
-```dart
-const like = 'sample';
-```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+Run `dart run mono_localization:generate` in order to generate or update strings.

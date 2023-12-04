@@ -24,7 +24,7 @@ class PubspecConfig {
       );
     }
 
-    final flutterIntlConfig = pubspecYaml['flutter_intl'] as YamlMap?;
+    final flutterIntlConfig = pubspecYaml['mono_localization'] as YamlMap?;
 
     if (flutterIntlConfig == null) {
       //TODO(kalinovsky): handle as exception.
