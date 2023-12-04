@@ -8,7 +8,9 @@ class LocalizationDetails {
     required this.base,
     required this.arbDir,
     required this.outputDir,
-    required this.className,
+    required this.libraryName,
+    required this.widgetName,
+    required this.widgetPath,
   });
 
   /// Factory method to create a [LocalizationDetails] object from a YAML map.
@@ -16,16 +18,38 @@ class LocalizationDetails {
   /// [yamlMap] represents the YAML map containing localization details. Returns
   /// a [LocalizationDetails] object constructed from the provided [yamlMap].
   factory LocalizationDetails.fromMap(YamlMap yamlMap) {
-    final base = typify<bool>(yamlMap['base'], defaultBasePackage);
-    final arbDir = typify<String>(yamlMap['arb_dir'], defaultArbDir);
-    final outputDir = typify<String>(yamlMap['output_dir'], defaultOutputDir);
-    final className = typify<String>(yamlMap['class_name'], defaultClassName);
+    final base = typify<bool>(
+      yamlMap['base'],
+      defaultBasePackage,
+    );
+    final arbDir = typify<String>(
+      yamlMap['arb_dir'],
+      defaultArbDir,
+    );
+    final outputDir = typify<String>(
+      yamlMap['output_dir'],
+      defaultOutputDir,
+    );
+    final libraryName = typify<String>(
+      yamlMap['library_name'],
+      defaultClassName,
+    );
+    final widgetName = typify<String>(
+      yamlMap['widget_name'],
+      defaultWidgetName(libraryName),
+    );
+    final widgetPath = typify<String>(
+      yamlMap['widget_path'],
+      defaultWidgetPath,
+    );
 
     return LocalizationDetails(
       base: base,
       arbDir: arbDir,
       outputDir: outputDir,
-      className: className,
+      libraryName: libraryName,
+      widgetName: widgetName,
+      widgetPath: widgetPath,
     );
   }
 
@@ -42,5 +66,11 @@ class LocalizationDetails {
   final String outputDir;
 
   ///Name of library.
-  final String className;
+  final String libraryName;
+
+  /// Returns name for library provider widget.
+  final String widgetName;
+
+  /// Returns path for library provider widget.
+  final String widgetPath;
 }

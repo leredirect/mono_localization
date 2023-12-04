@@ -137,6 +137,7 @@ String generateWidgetContent({
   required List<Label> labels,
   required String baseClassPath,
   required String baseClassName,
+  required String name,
 }) {
   return '''
 import 'package:flutter/cupertino.dart';
@@ -145,8 +146,8 @@ import 'package:intl/message_lookup_by_library.dart';
 
 import '$baseClassPath';
 
-class MonoLocalizationsProvider extends InheritedWidget {
-  const MonoLocalizationsProvider({
+class $name extends InheritedWidget {
+  const $name({
     required this.delegates,
     required super.child,
     this.currentLocale,
@@ -156,14 +157,14 @@ class MonoLocalizationsProvider extends InheritedWidget {
   final Locale? currentLocale;
   final List<$baseClassName> delegates;
 
-  static MonoLocalizationsProvider? maybeOf(BuildContext context) {
+  static $name? maybeOf(BuildContext context) {
     return context
-        .dependOnInheritedWidgetOfExactType<MonoLocalizationsProvider>();
+        .dependOnInheritedWidgetOfExactType<$name>();
   }
 
-  static MonoLocalizationsProvider of(BuildContext context) {
-    final MonoLocalizationsProvider? result = maybeOf(context);
-    assert(result != null, 'No MonoLocalizationsProvider found in context');
+  static $name of(BuildContext context) {
+    final $name? result = maybeOf(context);
+    assert(result != null, 'No $name found in context');
     return result!;
   }
 

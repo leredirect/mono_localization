@@ -24,14 +24,7 @@ class Generator {
     bool? useDeferredLoading,
     bool? otaEnabled,
   }) {
-    _className = defaultClassName;
-    if (isValidClassName(details.className)) {
-      _className = details.className;
-    } else {
-      warning(
-        "Config parameter 'class_name' requires valid 'UpperCamelCase' value.",
-      );
-    }
+    _details = details;
 
     if (isValidClassName(baseClassName)) {
       _baseClassName = baseClassName;
@@ -43,8 +36,6 @@ class Generator {
     }
 
     _baseClassPath = baseClassPath;
-
-    _base = details.base;
 
     _mainLocale = defaultMainLocale;
     if (mainLocale != null) {
@@ -59,37 +50,15 @@ class Generator {
       }
     }
 
-    _arbDir = defaultArbDir;
-    if (isValidPath(details.arbDir)) {
-      _arbDir = details.arbDir;
-    } else {
-      warning(
-        r"Config parameter 'arb_dir' requires valid path value (e.g. 'lib', 'res/', 'lib\l10n').",
-      );
-    }
-
-    _outputDir = defaultOutputDir;
-    if (isValidPath(details.outputDir)) {
-      _outputDir = details.outputDir;
-    } else {
-      warning(
-        "Config parameter 'output_dir' requires valid path value (e.g. 'lib', "
-        r"'lib\generated').",
-      );
-    }
-
     _useDeferredLoading = useDeferredLoading ?? defaultUseDeferredLoading;
 
     _otaEnabled = otaEnabled ?? defaultOtaEnabled;
   }
 
-  late bool _base;
-  late String _className;
+  late LocalizationDetails _details;
   late String _baseClassName;
   late String _baseClassPath;
   late String _mainLocale;
-  late String _arbDir;
-  late String _outputDir;
   late bool _useDeferredLoading;
   late bool _otaEnabled;
 
@@ -99,34 +68,43 @@ class Generator {
     await _updateGeneratedDir();
     await _generateDartFiles();
     await _removeL10nFiles();
+    if (_details.base) {
+      await generateWidget(
+        labels: LabelsPreserver().labels,
+        widgetPath: _details.widgetPath,
+        widgetName: _details.widgetName,
+        baseClassName: _baseClassName,
+        baseClassPath: _baseClassPath,
+      );
+    }
   }
 
   Future<void> _updateL10nDir() async {
-    final mainArbFile = getArbFileForLocale(_mainLocale, _arbDir);
+    final mainArbFile = getArbFileForLocale(_mainLocale, _details.arbDir);
     if (mainArbFile == null) {
-      await createArbFileForLocale(_mainLocale, _arbDir);
+      await createArbFileForLocale(_mainLocale, _details.arbDir);
     }
   }
 
   Future<void> _updateGeneratedDir() async {
     final labels = _getLabelsFromMainArbFile();
-    final locales = _orderLocales(getLocales(_arbDir));
-    final content =
-        generateL10nDartFileContent(_className, labels, locales, _otaEnabled);
+    final locales = _orderLocales(getLocales(_details.arbDir));
+    final content = generateL10nDartFileContent(
+        _details.libraryName, labels, locales, _otaEnabled);
     final formattedContent = formatDartContent(content, 'l10n.dart');
 
-    await updateL10nDartFile(formattedContent, _outputDir);
+    await updateL10nDartFile(formattedContent, _details.outputDir);
 
-    final intlDir = getIntlDirectory(_outputDir);
+    final intlDir = getIntlDirectory(_details.outputDir);
     if (intlDir == null) {
-      await createIntlDirectory(_outputDir);
+      await createIntlDirectory(_details.outputDir);
     }
 
-    await removeUnusedGeneratedDartFiles(locales, _outputDir);
+    await removeUnusedGeneratedDartFiles(locales, _details.outputDir);
   }
 
   List<Label> _getLabelsFromMainArbFile() {
-    final mainArbFile = getArbFileForLocale(_mainLocale, _arbDir);
+    final mainArbFile = getArbFileForLocale(_mainLocale, _details.arbDir);
     if (mainArbFile == null) {
       throw GeneratorException(
         "Can't find ARB file for the '$_mainLocale' locale.",
@@ -165,7 +143,7 @@ class Generator {
         placeholders: placeholders,
       );
     }).toList();
-    if (_base) {
+    if (_details.base) {
       LabelsPreserver().labels.addAll(labels);
     }
     return labels;
@@ -183,23 +161,23 @@ class Generator {
   }
 
   Future<void> _generateDartFiles() async {
-    final outputDir = getIntlDirectoryPath(_outputDir);
-    final dartFiles = [getL10nDartFilePath(_outputDir)];
-    final arbFiles = getArbFiles(_arbDir).map((file) => file.path).toList();
+    final outputDir = getIntlDirectoryPath(_details.outputDir);
+    final dartFiles = [getL10nDartFilePath(_details.outputDir)];
+    final arbFiles =
+        getArbFiles(_details.arbDir).map((file) => file.path).toList();
 
-    IntlTranslationHelper(_useDeferredLoading)
-      .generateFromArb(
-        outputDir,
-        dartFiles,
-        arbFiles,
-        _className,
-        _baseClassName,
-        _baseClassPath,
-      );
+    IntlTranslationHelper(_useDeferredLoading).generateFromArb(
+      outputDir,
+      dartFiles,
+      arbFiles,
+      _details.libraryName,
+      _baseClassName,
+      _baseClassPath,
+    );
   }
 
   Future<void> _removeL10nFiles() async {
-    final file = File(getL10nDartFilePath(_outputDir));
+    final file = File(getL10nDartFilePath(_details.outputDir));
     await file.delete();
   }
 
@@ -212,9 +190,10 @@ class Generator {
     await file.writeAsString(generateBaseClassContent(baseClassName));
   }
 
-  static Future<void> generateWidget({
+  Future<void> generateWidget({
     required List<Label> labels,
     required String widgetPath,
+    required String widgetName,
     required String baseClassName,
     required String baseClassPath,
   }) async {
@@ -225,6 +204,7 @@ class Generator {
         from: widgetPath.replaceAll(basename(widgetPath), ''),
       ),
       baseClassName: baseClassName,
+      name: widgetName,
     );
 
     final formatter = DartFormatter();

@@ -21,20 +21,29 @@ dev_dependencies:
   mockito: 5.4.3
   test: 1.24.9
   very_good_analysis: ^5.1.0
-#
-#
-#flutter_intl:
-#  enabled: true
-#  base_class_path: lib/src/localization/mono_localization_base.dart
-#  widget_path: lib/src/localization/mono_localization_provider.dart
-#  structure:
-#    - oxford:
-#        base: true
-#        class_name: BaseS
-#        arb_dir: lib/src/localization/base_s/arb/
-#        output_dir: lib/src/localization/base_s/generated/
-#    - am_heritage:
-#        class_name: CustomS
-#        arb_dir: lib/src/localization/custom_s/arb/
-#        output_dir: lib/src/localization/custom_s/generated/
-#  use_deferred_loading: false
+
+flutter_intl:
+  enabled: true
+  base_class_path: lib/test/library_base.dart
+  base_class_name: LocalizationLibraryBase
+  structure:
+    - library:
+        library_name: BaseLibrary
+        base: true
+        arb_dir: lib/test/base_library/arb/
+        output_dir: lib/test/base_library/
+        widget_path: lib/test/base_library/base_library_localization_provider.dart
+        widget_name: BaseLibraryLocalizationProvider
+    - library:
+        library_name: OtherBaseLibrary
+        base: true
+        arb_dir: lib/test/other_base_library/arb/
+        output_dir: lib/test/other_base_library/
+        widget_path: lib/test/other_base_library/other_base_library_localization_provider.dart
+        widget_name: OtherBaseLibraryLocalizationProvider
+    - library:
+        library_name: NonBaseLibrary
+        arb_dir: lib/test/non_base_library/arb/
+        output_dir: lib/test/non_base_library/
+        widget_path: lib/test/non_base_library/non_base_library_localization_provider.dart
+        widget_name: NonBaseLibraryLocalizationProvider

@@ -46,39 +46,41 @@ class PubspecConfig {
       }
     }
 
-    _mainLocale =
-        typify<String>(flutterIntlConfig['main_locale'], defaultMainLocale);
+    _mainLocale = typify<String>(
+      flutterIntlConfig['main_locale'],
+      defaultMainLocale,
+    );
     _baseClassName = typify<String>(
-        flutterIntlConfig['base_class_name'], defaultBaseClassName);
-    _widgetPath =
-        typify<String>(flutterIntlConfig['widget_path'], defaultWidgetPath);
+      flutterIntlConfig['base_class_name'],
+      defaultBaseClassName,
+    );
     _baseClassPath = typify<String>(
-        flutterIntlConfig['base_class_path'], defaultBaseClassPath);
+      flutterIntlConfig['base_class_path'],
+      defaultBaseClassPath,
+    );
     _useDeferredLoading = typify<bool>(
-        flutterIntlConfig['use_deferred_loading'], defaultUseDeferredLoading);
+      flutterIntlConfig['use_deferred_loading'],
+      defaultUseDeferredLoading,
+    );
   }
 
-  List<LocalizationDetails>? _localizationDetails;
-  bool? _enabled;
-  String? _mainLocale;
-  String? _baseClassName;
-  String? _baseClassPath;
-  String? _widgetPath;
-  bool? _useDeferredLoading;
+  late List<LocalizationDetails>? _localizationDetails;
+  late bool _enabled;
+  late String _mainLocale;
+  late String _baseClassName;
+  late String _baseClassPath;
+  late bool? _useDeferredLoading;
 
   ///Enables pubspec parsing.
   bool? get enabled => _enabled;
 
   ///Provides name for base class from which localization
   ///libraries will be inherited.
-  String? get baseClassName => _baseClassName;
+  String get baseClassName => _baseClassName;
 
   ///Provides path to base class from which localization
   ///libraries will be inherited.
-  String? get baseClassPath => _baseClassPath;
-
-  ///Provides path to widget, which injects localization in context.
-  String? get widgetPath => _widgetPath;
+  String get baseClassPath => _baseClassPath;
 
   ///Provides details for each localization library.
   List<LocalizationDetails>? get localizationDetails => _localizationDetails;
