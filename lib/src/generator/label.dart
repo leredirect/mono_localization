@@ -105,7 +105,8 @@ class Argument {
       ![ElementType.plural, ElementType.gender, ElementType.select]
           .contains(elementType);
 
-  String get formattedName => isFormatAllowed() ? '${name}String' : name;
+  ///TODO: investigate this
+  String get formattedName => isFormatAllowed() ? '${name}' : name;
 
   @override
   String toString() => '$type $name';
@@ -1220,8 +1221,8 @@ class Label {
       case ContentType.literal:
         return "String get $name => _lookup('$name') ?? '$name';";
       case ContentType.argument:
-        return "String $name(${_generateDartMethodParameters(args)}) => _lookup('$name', args: [${_generateDartMethodArgs(args)}]) ?? '$name';";
       case ContentType.plural:
+        return "String $name(${_generateDartMethodParameters(args)}) => _lookup('$name', args: [${_generateDartMethodArgs(args)}]) ?? '$name';";
       case ContentType.gender:
       case ContentType.select:
       case ContentType.compound:
