@@ -199,7 +199,7 @@ class $name extends InheritedWidget {
 }
 
   @override
-  bool updateShouldNotify(covariant MonoLocalizationsProvider oldWidget) {
+  bool updateShouldNotify(covariant $name oldWidget) {
     return oldWidget.delegates != delegates;
   }
 
