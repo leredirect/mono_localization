@@ -77,6 +77,7 @@ class Generator {
         baseClassPath: _baseClassPath,
       );
     }
+    LabelsPreserver().labels.clear();
   }
 
   Future<void> _updateL10nDir() async {
