@@ -192,7 +192,7 @@ class $name extends InheritedWidget {
     return null;
   }
   if (args != null && args.isNotEmpty) {
-    return translation.call(args.first);
+    return Function.apply(translation, args);
   } else {
     return translation.call();
   }
