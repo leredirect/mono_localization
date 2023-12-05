@@ -1226,7 +1226,7 @@ class Label {
       case ContentType.select:
       case ContentType.compound:
       default:
-        return "'missing literal : content-type: $contentType, for $name';";
+        return "String get $name => 'missing: content-type: $contentType, for $name';";
     }
   }
 }
