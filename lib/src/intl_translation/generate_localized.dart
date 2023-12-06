@@ -307,6 +307,8 @@ import '${path.relative(baseClassPath, from: currentFilePath)}';
   }
 }
 
+List<Locale> supportedLocales = [${allLocales.map((e) => 'Locale(' + "'$e'" + '),')}];
+
 /// User programs should call this before using [localeName] for messages.
 Future<bool> initializeMessages(String localeName) ${useDeferredLoading ? 'async ' : ''}{
   var availableLocale = Intl.verifiedLocale(
