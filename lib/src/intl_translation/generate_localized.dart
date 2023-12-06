@@ -106,8 +106,11 @@ class MessageGeneration {
 
   /// Generate a file <[generated_file_prefix]>_messages_<[locale]>.dart
   /// for the [translations] in [locale] and put it in [targetDir].
-  void generateIndividualMessageFile(String basicLocale,
-      Iterable<TranslatedMessage> translations, String targetDir,) {
+  void generateIndividualMessageFile(
+    String basicLocale,
+    Iterable<TranslatedMessage> translations,
+    String targetDir,
+  ) {
     final fileName = '${generatedFilePrefix}messages_$basicLocale.dart';
     final content = contentForLocale(basicLocale, translations);
     final formattedContent = formatDartContent(content, fileName);
@@ -121,7 +124,9 @@ class MessageGeneration {
   /// Generate a string that contains the dart code
   /// with the [translations] in [locale].
   String contentForLocale(
-      String basicLocale, Iterable<TranslatedMessage> translations,) {
+    String basicLocale,
+    Iterable<TranslatedMessage> translations,
+  ) {
     clearOutput();
     final locale = MainMessage()
         .escapeAndValidateString(Intl.canonicalizedLocale(basicLocale));
@@ -136,8 +141,10 @@ class MessageGeneration {
         original.addTranslation(locale, each.message);
       }
     }
-    usableTranslations.sort((a, b) => a.originalMessages!.first.name
-        .compareTo(b.originalMessages!.first.name),);
+    usableTranslations.sort(
+      (a, b) => a.originalMessages!.first.name
+          .compareTo(b.originalMessages!.first.name),
+    );
 
     writeTranslations(usableTranslations, locale);
 
@@ -146,7 +153,9 @@ class MessageGeneration {
 
   /// Write out the translated forms.
   void writeTranslations(
-      Iterable<TranslatedMessage> usableTranslations, String locale,) {
+    Iterable<TranslatedMessage> usableTranslations,
+    String locale,
+  ) {
     for (final translation in usableTranslations) {
       // Some messages we generate as methods in this class. Simpler ones
       // we inline in the map from names to messages.
@@ -156,7 +165,8 @@ class MessageGeneration {
         output
           ..write('  ')
           ..write(
-              original.toCodeForLocale(locale, _methodNameFor(original.name)),)
+            original.toCodeForLocale(locale, _methodNameFor(original.name)),
+          )
           ..write('\n\n');
       }
     }
@@ -169,9 +179,10 @@ class MessageGeneration {
             .toSet()
             .toList()
           ..sort((a, b) => a.name.compareTo(b.name)))
-        .map((original) =>
-            '    "${original.escapeAndValidateString(original.name)}" '
-            ': ${_mapReference(original, locale)}',);
+        .map(
+      (original) => '    "${original.escapeAndValidateString(original.name)}" '
+          ': ${_mapReference(original, locale)}',
+    );
     output
       ..write(entries.join(',\n'))
       ..write('\n  };\n}\n');
@@ -267,13 +278,26 @@ ${releaseMode ? overrideLookup : ''}""";
     }
     output.write('};\n');
     output.write('class $className extends $baseClassName { ');
-    output.write('\n@override\nMessageLookupByLibrary? findExact(String localeName) {\n'
+    output.write(
+        '\n@override\nMessageLookupByLibrary? findExact(String localeName) {\n'
         '  switch (localeName) {\n');
     for (final rawLocale in allLocales) {
       final locale = Intl.canonicalizedLocale(rawLocale);
       output.write(
-          "    case '$locale':\n      return ${libraryName(locale)}.messages;\n",);
+        "    case '$locale':\n      return ${libraryName(locale)}.messages;\n",
+      );
     }
+    output.write('''
+        default:\n      return null;
+  }
+}
+    ''');
+    output.write('\n\n');
+    output.write('List<Locale> supportedLocales = [');
+    for (var locale in allLocales) {
+      output.write("Locale('$locale'),");
+    }
+    output.write('];');
     output.write(closing);
     return output.toString();
   }
@@ -303,11 +327,6 @@ import '${path.relative(baseClassPath, from: currentFilePath)}';
 
   /// Constant string used in [generateMainImportFile] as the end of the file.
   String get closing => '''
-    default:\n      return null;
-  }
-}
-
-List<Locale> supportedLocales = [${allLocales.map((e) => 'Locale(' + "'$e'" + '),')}];
 
 /// User programs should call this before using [localeName] for messages.
 Future<bool> initializeMessages(String localeName) ${useDeferredLoading ? 'async ' : ''}{
@@ -380,7 +399,9 @@ import '${generatedFilePrefix}messages_all.dart' show evaluateJsonTemplate;
 
   @override
   void writeTranslations(
-      Iterable<TranslatedMessage> usableTranslations, String locale,) {
+    Iterable<TranslatedMessage> usableTranslations,
+    String locale,
+  ) {
     output.write('''
   Map<String, dynamic> _messages;
   Map<String, dynamic> get messages => _messages ??=
@@ -472,8 +493,8 @@ String evaluateJsonTemplate(dynamic input, List<dynamic> args) {
 /// variables into a Dart string interpolation. Specific translation mechanisms
 /// are expected to subclass this.
 abstract class TranslatedMessage {
-
   TranslatedMessage(this.id, this.translated);
+
   /// The identifier for this message. In the simplest case, this is the name
   /// parameter from the Intl.message call,
   /// but it can be any identifier that this program and the output of the
@@ -544,5 +565,7 @@ Map<String, String> _internalMethodNames = {};
 /// Generate a Dart method name of the form "m<number>".
 String _methodNameFor(String name) {
   return _internalMethodNames.putIfAbsent(
-      name, () => 'm${_methodNameCounter++}',);
+    name,
+    () => 'm${_methodNameCounter++}',
+  );
 }
