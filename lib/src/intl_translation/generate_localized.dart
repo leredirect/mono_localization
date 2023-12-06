@@ -322,6 +322,7 @@ import 'package:$intlImportPath/intl.dart';
 import 'package:$intlImportPath/message_lookup_by_library.dart';
 import 'package:$intlImportPath/src/intl_helpers.dart';
 import '${path.relative(baseClassPath, from: currentFilePath)}';
+import 'package:flutter/material.dart';
 
 """;
 
