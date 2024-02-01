@@ -1,9 +1,12 @@
-import 'package:mono_localization/src/utils/utils.dart';
 import 'package:mono_localization/src/generator/label.dart';
+import 'package:mono_localization/src/utils/utils.dart';
 
 String generateL10nDartFileContent(
-    String className, List<Label> labels, List<String> locales,
-    [bool otaEnabled = false,]) {
+  String className,
+  List<Label> labels,
+  List<String> locales, [
+  bool otaEnabled = false,
+]) {
   return """
 // GENERATED CODE - DO NOT MODIFY BY HAND
 import 'package:flutter/material.dart';
@@ -126,14 +129,17 @@ String _generateMetadata(List<Label> labels) {
 String generateBaseClassContent(String baseClassName) {
   return '''
 import 'package:intl/message_lookup_by_library.dart';
+import 'package:flutter/material.dart';
 
 abstract class $baseClassName {
   MessageLookupByLibrary? findExact(String localeName);
+  abstract List<Locale> supportedLocales;
+
 }
 ''';
 }
 
-String generateWidgetContent({
+String generateInheritedWidgetContent({
   required List<Label> labels,
   required String baseClassPath,
   required String baseClassName,
@@ -151,12 +157,13 @@ class $name extends InheritedWidget {
     required this.delegates,
     required super.child,
     this.currentLocale,
+    this.localeListResolutionCallback,
     super.key,
   });
 
   final Locale? currentLocale;
   final List<$baseClassName> delegates;
-
+  final Locale Function(List<Locale>?, Iterable<Locale>)? localeListResolutionCallback;
   static $name? maybeOf(BuildContext context) {
     return context
         .dependOnInheritedWidgetOfExactType<$name>();
@@ -174,9 +181,20 @@ class $name extends InheritedWidget {
     }) {
   List<MessageLookupByLibrary> libraries = [];
   for (var delegate in delegates) {
-    MessageLookupByLibrary? library = delegate.findExact(
-        currentLocale?.languageCode ??
-            Intl.getCurrentLocale().split('_').first);
+     Locale localeToUse = currentLocale ??
+          Locale(
+            Intl.getCurrentLocale().split('_').first,
+          );
+      if (!delegate.supportedLocales.contains(localeToUse)) {
+        if (localeListResolutionCallback != null) {
+          localeToUse = localeListResolutionCallback!(
+            WidgetsBinding.instance.platformDispatcher.locales,
+            delegate.supportedLocales,
+          );
+        }
+      }
+      final MessageLookupByLibrary? library =
+          delegate.findExact(localeToUse.languageCode);
     if (library != null) {
       libraries.add(library);
     }

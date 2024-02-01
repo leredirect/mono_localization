@@ -293,7 +293,7 @@ ${releaseMode ? overrideLookup : ''}""";
 }
     ''');
     output.write('\n\n');
-    output.write('static List<Locale> supportedLocales = [');
+    output.write('List<Locale> supportedLocales = [');
     for (var locale in allLocales) {
       output.write("Locale('$locale'),");
     }

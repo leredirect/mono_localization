@@ -198,7 +198,7 @@ class Generator {
     required String baseClassName,
     required String baseClassPath,
   }) async {
-    final rawContent = generateWidgetContent(
+    final rawContent = generateInheritedWidgetContent(
       labels: labels,
       baseClassPath: relative(
         baseClassPath,
