@@ -208,7 +208,9 @@ class Generator {
       name: widgetName,
     );
 
-    final formatter = DartFormatter();
+    final formatter = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    );
     final formattedContent = formatter.format(rawContent);
     final widgetFile = File(widgetPath);
     await widgetFile.writeAsString(formattedContent);
